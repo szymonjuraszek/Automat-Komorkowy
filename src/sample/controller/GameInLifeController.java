@@ -20,6 +20,7 @@ public class GameInLifeController {
 
     private static int X;
     private static int Y;
+    public static final double  J=1.0;
 
     @FXML
     Canvas canvas;
@@ -28,6 +29,10 @@ public class GameInLifeController {
     TextField sizeFieldX;
     @FXML
     TextField sizeFieldY;
+    @FXML
+    TextField constantText;
+    @FXML
+    TextField iterationText;
 
     @FXML
     Button startButton;
@@ -81,6 +86,7 @@ public class GameInLifeController {
        System.out.println("Inicjuje dane dla game in life");
        sizeFieldX.setText("45");
        sizeFieldY.setText("80");
+       constantText.setText("0.6");
        slowRadio.setSelected(true);
        drawer = canvas.getGraphicsContext2D();
 
@@ -491,6 +497,114 @@ public class GameInLifeController {
         }
     }
 
+    /*******************************************************************************************************************************************/
+
+    @FXML
+    void countMonteCarlo(){
+        if(!ifStart) {
+
+            sizeFieldX.setEditable(false);
+            sizeFieldY.setEditable(false);
+
+            ifStart = true;
+            new Thread(() -> {
+
+                Random random = new Random();
+                int x;
+                int y;
+                int iterations = Integer.parseInt(iterationText.getCharacters().toString());
+
+                for (int g = 0; g < iterations; g++) {
+                    for (x = 0; x < X; x++) {
+                        for (y = 0; y < Y; y++) {
+                            if(ifStart){
+
+                                int energy= (int) (neighborhood.check(condition,startPoints,x,y,tmpStartPoints)*J);
+                                Cell cell[][] = new Cell[1][1];
+                                cell[0][0]=new Cell();
+                                int newValue=neighborhood.giveRandomIdNeighborhood(startPoints,condition,x,y);
+                                cell[0][0].setColorNumber(newValue);
+                                int oldValue = startPoints[x][y].getColorNumber();
+                                startPoints[x][y].setColorNumber(cell[0][0].getColorNumber());
+                                int tmpEnergy = (int) (neighborhood.check(condition,startPoints,x,y,tmpStartPoints)*J);
+
+                                int differenceEnergy = tmpEnergy-energy;
+
+                                if(differenceEnergy>0){
+                                    double likelihood=Math.exp((-1*differenceEnergy)/Double.parseDouble(constantText.getCharacters().toString()));
+//                                    System.out.println("prawdopodobienstwo:  " + likelihood);
+                                    if(random.nextDouble()>likelihood){
+                                        startPoints[x][y].setColorNumber(oldValue);
+                                    }else {
+                                        drawer.setFill(Colors.getColor(newValue-1));
+                                        drawer.fillRoundRect(y*SquareShape.WIDTH,x*SquareShape.HEIGHT,SquareShape.WIDTH,SquareShape.HEIGHT,0,0);
+                                    }
+                                }else{
+                                    startPoints[x][y].setColorNumber(oldValue);
+                                }
+                            }
+
+                        }
+                    }
+                }
+
+
+//                    for(int i=0;i<iterations;i++){
+//                        if(ifStart){
+//                            x = random.nextInt(X);
+//                            y = random.nextInt(Y);
+//                            int energy= (int) (neighborhood.check(condition,startPoints,x,y,tmpStartPoints)*J);
+//                            Cell cell[][] = new Cell[1][1];
+//                            cell[0][0]=new Cell();
+//                            int newValue=neighborhood.giveRandomIdNeighborhood(startPoints,condition,x,y);
+//                            cell[0][0].setColorNumber(newValue);
+//                            int oldValue = startPoints[x][y].getColorNumber();
+//                            startPoints[x][y].setColorNumber(cell[0][0].getColorNumber());
+//                            int tmpEnergy = (int) (neighborhood.check(condition,startPoints,x,y,tmpStartPoints)*J);
+//
+//                            int differenceEnergy = tmpEnergy-energy;
+//
+//                            if(differenceEnergy>0){
+//                                double likelihood=Math.exp(-differenceEnergy/Double.parseDouble(constantText.getCharacters().toString()));
+//                                if(random.nextDouble()<likelihood){
+//                                    startPoints[x][y].setColorNumber(oldValue);
+//                                }else {
+//                                    drawer.setFill(Colors.getColor(newValue-1));
+//                                    drawer.fillRoundRect(y*SquareShape.WIDTH,x*SquareShape.HEIGHT,SquareShape.WIDTH,SquareShape.HEIGHT,0,0);
+//                                }
+//                            }else{
+//                                startPoints[x][y].setColorNumber(oldValue);
+//                            }
+//                        }else{
+//                            break;
+//                        }
+//                }
+
+                sizeFieldX.setEditable(true);
+                sizeFieldY.setEditable(true);
+                ifStart=false;
+            }).start();
+
+        }else{
+            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Program is working(pick stop if yo want to stop)");
+            alert.showAndWait();
+        }
+        System.out.println("Skonczylem prace");
+    }
+
+    private void checkNeighborhoods(){
+
+    }
+
+    @FXML
+    void showCA(){
+
+    }
+
+    @FXML
+    void showEnergy(){
+        //drawOnCanvasRectangles()
+    }
 
 
 

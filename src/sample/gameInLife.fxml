@@ -165,5 +165,50 @@
             <Insets left="400.0" top="110.0" />
          </StackPane.margin>
       </Label>
+      <TextField fx:id="constantText" StackPane.alignment="CENTER_LEFT">
+         <StackPane.margin>
+            <Insets bottom="100.0" left="20.0" right="1000.0" />
+         </StackPane.margin>
+      </TextField>
+      <Label text="set constant" StackPane.alignment="CENTER_LEFT">
+         <StackPane.margin>
+            <Insets bottom="150.0" left="20.0" />
+         </StackPane.margin>
+      </Label>
+      <Button mnemonicParsing="false" onAction="#countMonteCarlo" text="Monte Carlo">
+         <StackPane.margin>
+            <Insets left="600.0" top="70.0" />
+         </StackPane.margin>
+      </Button>
+      <Label text="Only after geeration CA">
+         <StackPane.margin>
+            <Insets left="600.0" top="40.0" />
+         </StackPane.margin>
+      </Label>
+      <Button mnemonicParsing="false" onAction="#showEnergy" text="Energy">
+         <StackPane.margin>
+            <Insets left="800.0" top="70.0" />
+         </StackPane.margin>
+      </Button>
+      <Button mnemonicParsing="false" onAction="#showCA" text="CA">
+         <StackPane.margin>
+            <Insets left="800.0" top="120.0" />
+         </StackPane.margin>
+      </Button>
+      <Label text="Show result">
+         <StackPane.margin>
+            <Insets left="800.0" top="40.0" />
+         </StackPane.margin>
+      </Label>
+      <TextField fx:id="iterationText">
+         <StackPane.margin>
+            <Insets left="1000.0" top="70.0" />
+         </StackPane.margin>
+      </TextField>
+      <Label text="Iteration">
+         <StackPane.margin>
+            <Insets left="1000.0" top="40.0" />
+         </StackPane.margin>
+      </Label>
    </children>
 </StackPane>

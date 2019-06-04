@@ -7,8 +7,9 @@ import java.util.Random;
 
 public class HexagonalRandom implements Neighborhood {
     @Override
-    public void check(BoundaryCondition condition, Cell[][] points, int i, int j, Cell[][] tmpPoints) {
+    public int check(BoundaryCondition condition, Cell[][] points, int i, int j, Cell[][] tmpPoints) {
         Random random = new Random();
+        int energy=0;
 
         int choose=random.nextInt(2);
         System.out.println(choose);
@@ -24,17 +25,26 @@ public class HexagonalRandom implements Neighborhood {
                                 if (((points[condition.funY(i + x)][condition.funX(j + y)].getColorNumber() == 0))) {
                                     tmpPoints[condition.funY(i + x)][condition.funX(j + y)].setColorNumber(points[i][j].getColorNumber());
                                 }
+                                if ( points[condition.funY(i + x)][condition.funX(j + y)].getColorNumber() != (points[i][j].getColorNumber()) ) {
+                                    energy++;
+                                }
                             }
                         } else if (x == 1) {
                             for (y = -1; y < 1; y++) {
                                 if (((points[condition.funY(i + x)][condition.funX(j + y)].getColorNumber() == 0))) {
                                     tmpPoints[condition.funY(i + x)][condition.funX(j + y)].setColorNumber(points[i][j].getColorNumber());
                                 }
+                                if ( points[condition.funY(i + x)][condition.funX(j + y)].getColorNumber() != (points[i][j].getColorNumber()) ) {
+                                    energy++;
+                                }
                             }
                         } else {
                             for (y = -1; y < 2; y++) {
                                 if ((points[condition.funY(i + x)][condition.funX(j + y)].getColorNumber() == 0)) {
                                     tmpPoints[condition.funY(i + x)][condition.funX(j + y)].setColorNumber(points[i][j].getColorNumber());
+                                }
+                                if ( points[condition.funY(i + x)][condition.funX(j + y)].getColorNumber() != (points[i][j].getColorNumber()) ) {
+                                    energy++;
                                 }
                             }
                         }
@@ -55,17 +65,26 @@ public class HexagonalRandom implements Neighborhood {
                                 if (((points[condition.funY(i + x)][condition.funX(j + y)].getColorNumber() == 0))) {
                                     tmpPoints[condition.funY(i + x)][condition.funX(j + y)].setColorNumber(points[i][j].getColorNumber());
                                 }
+                                if ( points[condition.funY(i + x)][condition.funX(j + y)].getColorNumber() != (points[i][j].getColorNumber()) ) {
+                                    energy++;
+                                }
                             }
                         } else if (x == 1) {
                             for (y = 0; y < 2; y++) {
                                 if (((points[condition.funY(i + x)][condition.funX(j + y)].getColorNumber() == 0))) {
                                     tmpPoints[condition.funY(i + x)][condition.funX(j + y)].setColorNumber(points[i][j].getColorNumber());
                                 }
+                                if ( points[condition.funY(i + x)][condition.funX(j + y)].getColorNumber() != (points[i][j].getColorNumber()) ) {
+                                    energy++;
+                                }
                             }
                         } else {
                             for (y = -1; y < 2; y++) {
                                 if ((points[condition.funY(i + x)][condition.funX(j + y)].getColorNumber() == 0)) {
                                     tmpPoints[condition.funY(i + x)][condition.funX(j + y)].setColorNumber(points[i][j].getColorNumber());
+                                }
+                                if ( points[condition.funY(i + x)][condition.funX(j + y)].getColorNumber() != (points[i][j].getColorNumber()) ) {
+                                    energy++;
                                 }
                             }
                         }
@@ -77,5 +96,7 @@ public class HexagonalRandom implements Neighborhood {
                 break;
             }
         }
+
+        return energy;
     }
 }

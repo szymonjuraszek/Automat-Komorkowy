@@ -7,10 +7,11 @@ import java.util.Random;
 
 public class PentagonalRandom implements Neighborhood {
     @Override
-    public void check(BoundaryCondition condition, Cell[][] points, int i, int j, Cell[][] tmpPoints) {
+    public int check(BoundaryCondition condition, Cell[][] points, int i, int j, Cell[][] tmpPoints) {
         Random random = new Random();
         int choose=random.nextInt(4);
         int x, y;
+        int energy=0;
 
         if(points[i][j].getColorNumber()!=0) {
             switch (choose) {
@@ -38,6 +39,9 @@ public class PentagonalRandom implements Neighborhood {
                                 if (((points[condition.funY(i + x)][condition.funX(j + y)].getColorNumber() == 0))) {
                                     tmpPoints[condition.funY(i + x)][condition.funX(j + y)].setColorNumber(points[i][j].getColorNumber());
                                 }
+                                if ( points[condition.funY(i + x)][condition.funX(j + y)].getColorNumber() != (points[i][j].getColorNumber()) ) {
+                                    energy++;
+                                }
                             }
                         }
                     break;
@@ -51,6 +55,9 @@ public class PentagonalRandom implements Neighborhood {
                             for (y = -1; y < 2; y++) {
                                 if (((points[condition.funY(i + x)][condition.funX(j + y)].getColorNumber() == 0))) {
                                     tmpPoints[condition.funY(i + x)][condition.funX(j + y)].setColorNumber(points[i][j].getColorNumber());
+                                }
+                                if ( points[condition.funY(i + x)][condition.funX(j + y)].getColorNumber() != (points[i][j].getColorNumber()) ) {
+                                    energy++;
                                 }
                             }
                         }
@@ -66,6 +73,9 @@ public class PentagonalRandom implements Neighborhood {
                                 if (((points[condition.funY(i + x)][condition.funX(j + y)].getColorNumber() == 0))) {
                                     tmpPoints[condition.funY(i + x)][condition.funX(j + y)].setColorNumber(points[i][j].getColorNumber());
                                 }
+                                if ( points[condition.funY(i + x)][condition.funX(j + y)].getColorNumber() != (points[i][j].getColorNumber()) ) {
+                                    energy++;
+                                }
                             }
                         }
                     break;
@@ -74,6 +84,9 @@ public class PentagonalRandom implements Neighborhood {
             }
             tmpPoints[i][j].setColorNumber( points[i][j].getColorNumber());
         }
+
+
+        return energy;
 
     }
 

@@ -6,10 +6,11 @@ import sample.structure.Cell;
 public class VonNewman implements Neighborhood {
 
     @Override
-    public void check(BoundaryCondition condition, Cell points[][], int i, int j, Cell tmpPoints[][]) {
+    public int check(BoundaryCondition condition, Cell points[][], int i, int j, Cell tmpPoints[][]) {
 
 
         int x, y;
+        int energy=0;
 
         // oblicza liczbę sąsiadów komórki [x,y]
         if(points[i][j].getColorNumber()!=0) {
@@ -19,10 +20,16 @@ public class VonNewman implements Neighborhood {
                     if ((points[condition.funY(i + x)][condition.funX(j + y)].getColorNumber() == 0)) {
                         tmpPoints[condition.funY(i + x)][condition.funX(j + y)].setColorNumber(points[i][j].getColorNumber());
                     }
+                    if ( points[condition.funY(i + x)][condition.funX(j + y)].getColorNumber() != (points[i][j].getColorNumber()) ) {
+                        energy++;
+                    }
                 } else {
                     for (y = -1; y < 2; y++) {
                         if (((y != 0)) && (points[condition.funY(i + x)][condition.funX(j + y)].getColorNumber() == 0)) {
                             tmpPoints[condition.funY(i + x)][condition.funX(j + y)].setColorNumber(points[i][j].getColorNumber());
+                        }
+                        if ( points[condition.funY(i + x)][condition.funX(j + y)].getColorNumber() != (points[i][j].getColorNumber()) ) {
+                            energy++;
                         }
                     }
                 }
@@ -30,6 +37,6 @@ public class VonNewman implements Neighborhood {
             tmpPoints[i][j].setColorNumber(points[i][j].getColorNumber());
         }
 
-
+        return energy;
     }
 }

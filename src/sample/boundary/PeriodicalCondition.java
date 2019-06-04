@@ -12,7 +12,7 @@ public class PeriodicalCondition extends BoundaryCondition {
     {
         int row =sizeY;
 
-        if(x >= row) x =  row-x;
+        if(x >= row) x =  x-row;
         if(x <  0) x = row+x;
         return x;
     }
@@ -22,7 +22,7 @@ public class PeriodicalCondition extends BoundaryCondition {
     public int funY(int y)
     {
         int column =sizeX;
-        if(y >= column) y =  column-y;
+        if(y >= column) y =  y-column;
         if(y <  0) y = column+y;
         return y;
     }
