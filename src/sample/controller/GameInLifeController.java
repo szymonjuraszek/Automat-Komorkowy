@@ -539,6 +539,7 @@ public class GameInLifeController {
         for(int i=0;i<X;i++){
             ww:
             for(int j=0;j<Y;j++){
+
                 for(int w=1;w< Colors.getNumberOfColors();w++){
                     if(startPoints[i][j].getColorNumber()==w){
                         drawer.setFill(Colors.getColor(w-1));

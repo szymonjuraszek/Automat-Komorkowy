@@ -6,8 +6,8 @@ import sample.SquareShape;
 import java.util.Random;
 
 public class Cell {
-    private int specifyGravityX;
-    private int specifyGravityY;
+    private double specifyGravityX;
+    private double specifyGravityY;
     private int colorNumber;
     private static final Random random = new Random();
 
@@ -16,8 +16,8 @@ public class Cell {
     }
 
     public Cell(int x,int y) {
-        this.specifyGravityX = x * SquareShape.HEIGHT + random.nextInt(10);
-        this.specifyGravityY = y * SquareShape.WIDTH + random.nextInt(10);
+        this.specifyGravityX = x * SquareShape.HEIGHT + random.nextDouble()*100;
+        this.specifyGravityY = y * SquareShape.WIDTH + random.nextDouble()*100;
     }
 
     public int getColorNumber() {
