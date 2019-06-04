@@ -51,18 +51,20 @@ public class GameInLifeController {
     TextField pointsText;
 
     private GraphicsContext drawer;
-    private Cell startPoints[][] = new Cell[45][80];
-    private Cell tmpStartPoints[][] = new Cell[45][80];
+    private Cell startPoints[][];
+    private Cell tmpStartPoints[][];
     volatile static boolean ifStart = false;
     private static Neighborhood neighborhood = new Moore();
     private static BoundaryCondition condition = new PeriodicalCondition(45,80);
     private byte howManyDifferentColours=1;
 
     private void initCells(){
+        startPoints= new Cell[X][Y];
+        tmpStartPoints= new Cell[X][Y];
         for(int i=0;i<X;i++){
             for(int j=0;j<Y;j++){
-                startPoints[i][j] = new Cell();
-                tmpStartPoints[i][j]=new Cell();
+                startPoints[i][j] = new Cell(i,j);
+                tmpStartPoints[i][j]=new Cell(i,j);
             }
         }
     }
@@ -168,7 +170,6 @@ public class GameInLifeController {
             sizeFieldY.setEditable(false);
             if(neighborhood instanceof RadiusNeighborhood){
                 ((RadiusNeighborhood) neighborhood).setRadious(Double.parseDouble(radiusText.getCharacters().toString()));
-                ((RadiusNeighborhood) neighborhood).calculateMeasuresOfGravity(X,Y);
             }
 
             ifStart = true;
@@ -201,10 +202,10 @@ public class GameInLifeController {
                         for (int j = 0; j < Y; j++) {
 
                             startPoints[i][j].setColorNumber(tmpStartPoints[i][j].getColorNumber());
-                            //System.out.print(startPoints[i][j].getColorNumber()+ " ");
+//                            System.out.print(startPoints[i][j].getColorNumber()+ " ");
                             tmpStartPoints[i][j].setColorNumber(0);
                         }
-                        //System.out.println();
+//                        System.out.println();
                     }
                     preparationBeforeDrawing();
                     drawOnCanvasRectangles(startPoints);
@@ -480,7 +481,7 @@ public class GameInLifeController {
 //                System.out.println(counter);
                     startPoints[x][y].setColorNumber(counter);
                 }
-                System.out.println(counter);
+                //System.out.println(counter);
             } while (counter < numberOfSeed);
 
             drawOnCanvasRectangles(startPoints);
@@ -522,13 +523,9 @@ public class GameInLifeController {
         if(!ifStart) {
             setSize();
         }
-
         if(X!=startPoints.length || Y!=startPoints[0].length){
-//            System.out.println("X " +X);
-//            System.out.println("Y " +Y);
+            System.out.println("jestem przy init");
             initCells();
-//            startPoints = new Cell[X][Y];
-//            tmpStartPoints = new Cell[X][Y];
         }
     }
 
