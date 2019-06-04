@@ -9,6 +9,15 @@ public class Cell {
     private double specifyGravityX;
     private double specifyGravityY;
     private int colorNumber;
+    private int energy;
+
+    public int getEnergy() {
+        return energy;
+    }
+
+    public void setEnergy(int energy) {
+        this.energy = energy;
+    }
 
     public double getSpecifyGravityX() {
         return specifyGravityX;

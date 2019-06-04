@@ -535,12 +535,15 @@ public class GameInLifeController {
 //                                    System.out.println("prawdopodobienstwo:  " + likelihood);
                                     if(random.nextDouble()>likelihood){
                                         startPoints[x][y].setColorNumber(oldValue);
+                                        startPoints[x][y].setEnergy(energy);
                                     }else {
                                         drawer.setFill(Colors.getColor(newValue-1));
+                                        startPoints[x][y].setEnergy(tmpEnergy);
                                         drawer.fillRoundRect(y*SquareShape.WIDTH,x*SquareShape.HEIGHT,SquareShape.WIDTH,SquareShape.HEIGHT,0,0);
                                     }
                                 }else{
                                     startPoints[x][y].setColorNumber(oldValue);
+                                    startPoints[x][y].setEnergy(energy);
                                 }
                             }
 
@@ -598,12 +601,28 @@ public class GameInLifeController {
 
     @FXML
     void showCA(){
-
+        drawOnCanvasRectangles(startPoints);
     }
 
     @FXML
     void showEnergy(){
-        //drawOnCanvasRectangles()
+        canvas.setWidth(Y* SquareShape.WIDTH);
+        canvas.setHeight(X*SquareShape.HEIGHT);
+
+        for(int i=0;i<X;i++){
+            ww:
+            for(int j=0;j<Y;j++){
+
+                for(int w=1;w< Colors.getNumberOfColors();w++){
+                    if(startPoints[i][j].getEnergy()==w){
+                        drawer.setFill(Colors.getColor(w-1));
+                        drawer.fillRoundRect(j*SquareShape.WIDTH,i*SquareShape.HEIGHT,SquareShape.WIDTH,SquareShape.HEIGHT,0,0);
+                        continue ww;
+                    }
+                }
+                drawer.strokeRect(j*SquareShape.WIDTH,i*SquareShape.HEIGHT,SquareShape.WIDTH,SquareShape.HEIGHT);
+            }
+        }
     }
 
 
