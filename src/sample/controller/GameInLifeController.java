@@ -169,6 +169,9 @@ public class GameInLifeController {
             sizeFieldX.setEditable(false);
             sizeFieldY.setEditable(false);
             if(neighborhood instanceof RadiusNeighborhood){
+                if(Double.parseDouble(radiusText.getCharacters().toString())>40){
+                    radiusText.setText("20");
+                }
                 ((RadiusNeighborhood) neighborhood).setRadious(Double.parseDouble(radiusText.getCharacters().toString()));
             }
 
