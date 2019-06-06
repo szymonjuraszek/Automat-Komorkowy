@@ -175,12 +175,12 @@
             <Insets bottom="150.0" left="20.0" />
          </StackPane.margin>
       </Label>
-      <Button mnemonicParsing="false" onAction="#countMonteCarlo" text="Monte Carlo">
+      <Button fx:id="monteCarloButton" mnemonicParsing="false" onAction="#countMonteCarlo" text="Monte Carlo">
          <StackPane.margin>
             <Insets left="600.0" top="70.0" />
          </StackPane.margin>
       </Button>
-      <Label text="Only after geeration CA">
+      <Label text="Only after generation CA">
          <StackPane.margin>
             <Insets left="600.0" top="40.0" />
          </StackPane.margin>
@@ -210,5 +210,20 @@
             <Insets left="1000.0" top="40.0" />
          </StackPane.margin>
       </Label>
+      <Button mnemonicParsing="false" onAction="#recrystallize" text="Recrystallization" StackPane.alignment="TOP_LEFT">
+         <StackPane.margin>
+            <Insets left="600.0" top="120.0" />
+         </StackPane.margin>
+      </Button>
+      <Button mnemonicParsing="false" onAction="#showRecrystallization" text="Recrystallization" StackPane.alignment="TOP_LEFT">
+         <StackPane.margin>
+            <Insets left="880.0" top="120.0" />
+         </StackPane.margin>
+      </Button>
+      <Button mnemonicParsing="false" text="Save To File" StackPane.alignment="TOP_LEFT">
+         <StackPane.margin>
+            <Insets left="880.0" top="70.0" />
+         </StackPane.margin>
+      </Button>
    </children>
 </StackPane>

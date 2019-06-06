@@ -1,15 +1,18 @@
 package sample.structure;
 
-
 import sample.SquareShape;
 
+import java.math.BigInteger;
 import java.util.Random;
 
 public class Cell {
+    public static final BigInteger CRITICAL_DISSLOCATION = new BigInteger("13927458546192");
     private double specifyGravityX;
     private double specifyGravityY;
     private int colorNumber;
     private int energy;
+    private BigInteger dislocationDensity;
+    private boolean ifGlacial;
 
     public int getEnergy() {
         return energy;
@@ -36,9 +39,11 @@ public class Cell {
     public Cell(int x,int y) {
         this.specifyGravityX = x * SquareShape.HEIGHT + random.nextDouble()*10;
         this.specifyGravityY = y * SquareShape.WIDTH + random.nextDouble()*10;
+        ifGlacial=false;
+        dislocationDensity=new BigInteger("0");
 
-        System.out.println(this.specifyGravityX);
-        System.out.println(this.specifyGravityY);
+//        System.out.println(this.specifyGravityX);
+//        System.out.println(this.specifyGravityY);
     }
 
     public int getColorNumber() {
@@ -49,5 +54,26 @@ public class Cell {
         this.colorNumber = colorNumber;
     }
 
+    public void addDislocationDensity(BigInteger dislocationDensity){
+        this.dislocationDensity =this.dislocationDensity.add(dislocationDensity);
+
+    }
+
+    public BigInteger getDislocationDensity() {
+        return dislocationDensity;
+    }
+
+    public void setDislocationDensity(BigInteger dislocationDensity) {
+        this.dislocationDensity = dislocationDensity;
+    }
+
+
+    public boolean isIfGlacial() {
+        return ifGlacial;
+    }
+
+    public void setIfGlacial(boolean ifGlacial) {
+        this.ifGlacial = ifGlacial;
+    }
 }
 

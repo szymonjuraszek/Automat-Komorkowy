@@ -1,5 +1,6 @@
 package sample.controller;
 
+import com.sun.xml.internal.bind.v2.runtime.reflect.opt.Const;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -7,6 +8,7 @@ import javafx.scene.control.*;
 import javafx.scene.paint.Color;
 import sample.BadSizeException;
 import sample.Colors;
+import sample.ConstantValue;
 import sample.SquareShape;
 import sample.boundary.AbsorbingCondition;
 import sample.boundary.BoundaryCondition;
@@ -14,6 +16,9 @@ import sample.boundary.PeriodicalCondition;
 import sample.neighborhood.*;
 import sample.structure.Cell;
 
+import java.io.FileWriter;
+import java.io.IOException;
+import java.math.BigInteger;
 import java.util.*;
 
 public class GameInLifeController {
@@ -38,6 +43,8 @@ public class GameInLifeController {
     Button startButton;
     @FXML
     Button stopButton;
+    @FXML
+    Button monteCarloButton;
 
     @FXML
     RadioButton slowRadio;
@@ -166,12 +173,16 @@ public class GameInLifeController {
     @FXML
     public void stop(){
         ifStart=false;
+        startButton.setDisable(false);
+        monteCarloButton.setDisable(false);
     }
 
     @FXML
     public void start(){
         if(!ifStart) {
 
+            monteCarloButton.setDisable(true);
+            startButton.setDisable(true);
             sizeFieldX.setEditable(false);
             sizeFieldY.setEditable(false);
             if(neighborhood instanceof RadiusNeighborhood){
@@ -232,6 +243,13 @@ public class GameInLifeController {
         System.out.println("Skonczylem prace");
 
     }
+
+
+    @FXML
+    void showCA(){
+        drawOnCanvasRectangles(startPoints);
+    }
+
 
 
 
@@ -497,11 +515,14 @@ public class GameInLifeController {
         }
     }
 
-    /*******************************************************************************************************************************************/
+    /*****************************************************************             Monte Carlo             **************************************************************************/
 
     @FXML
     void countMonteCarlo(){
         if(!ifStart) {
+
+            startButton.setDisable(true);
+            monteCarloButton.setDisable(true);
 
             sizeFieldX.setEditable(false);
             sizeFieldY.setEditable(false);
@@ -585,7 +606,7 @@ public class GameInLifeController {
 
                 sizeFieldX.setEditable(true);
                 sizeFieldY.setEditable(true);
-                ifStart=false;
+                stop();
             }).start();
 
         }else{
@@ -593,15 +614,6 @@ public class GameInLifeController {
             alert.showAndWait();
         }
         System.out.println("Skonczylem prace");
-    }
-
-    private void checkNeighborhoods(){
-
-    }
-
-    @FXML
-    void showCA(){
-        drawOnCanvasRectangles(startPoints);
     }
 
     @FXML
@@ -625,6 +637,189 @@ public class GameInLifeController {
         }
     }
 
+    /*************************************************           Rekrystalizacja                 *******************************************************************************************************/
+
+    @FXML
+    public void recrystallize() throws IOException {
+
+        int iterations = Integer.parseInt(iterationText.getCharacters().toString());
+        Random random = new Random();
+
+        for(int i=0;i<iterations;i++){
+            double roFirst = ConstantValue.A/ ConstantValue.B + (1 - ConstantValue.A/ ConstantValue.B*Math.exp(ConstantValue.B*ConstantValue.TIME));
+            double roSecond = ConstantValue.A/ ConstantValue.B + (1 - ConstantValue.A/ ConstantValue.B*Math.exp(ConstantValue.B*(ConstantValue.TIME + (i+1)*0.001)));
+            double roDelta = roFirst-roSecond;
+            double overageDislocation = roDelta/X*Y;
+            double percent = random.nextInt(100)/100;
+            long pack = (long) (overageDislocation*percent);
+            for(int x=0;x<X;x++){
+                for(int y=0;y<Y;y++){
+                    startPoints[x][y].addDislocationDensity(BigInteger.valueOf(pack));
+                }
+            }
+
+            int howManyPacks = random.nextInt(100);
+            pack = (long) (overageDislocation*((100 - percent*100)/100)/howManyPacks);
+
+            double likelihood = 0.8;
+
+
+            int z;
+            wew1:
+            for(z=0;z<howManyPacks;z++){
+                boolean flag=true;
+
+                double randomPoint = random.nextDouble();
+
+                if(randomPoint<=likelihood){
+
+
+                    do {
+                        int indexX = random.nextInt(X);
+                        int indexY = random.nextInt(Y);
+//                        System.out.println("index x " +indexX);
+//                        System.out.println("index y " +indexY);
+
+                        // Moore
+
+                        for (int w = -1; w < 2; w++)
+                            for (int g = -1; g < 2; g++) {
+                                if (((startPoints[condition.funY(indexX + w)][condition.funX(indexY + g)].getColorNumber() != startPoints[indexX][indexY].getColorNumber()))) {
+                                    startPoints[condition.funY(indexX)][condition.funX(indexY)].addDislocationDensity(BigInteger.valueOf(pack));
+
+                                    if(startPoints[indexX][indexY].getDislocationDensity().divide(new BigInteger("100")).compareTo(Cell.CRITICAL_DISSLOCATION)==1){
+                                        startPoints[indexX][indexY].setColorNumber(3500);
+                                        startPoints[indexX][indexY].setIfGlacial(true);
+                                        startPoints[indexX][indexY].setDislocationDensity(new BigInteger("0"));
+                                    }
+                                    continue wew1;
+                                }
+                            }
+
+//                        System.out.println("Wszystkie takie same");
+                    }while(flag!=false);
+
+
+                }else{
+                    wew2:
+                    do {
+                        int indexX = random.nextInt(X);
+                        int indexY = random.nextInt(Y);
+
+                        // Moore
+
+                        for (int w = -1; w < 2; w++) {
+                            for (int g = -1; g < 2; g++) {
+                                if (((startPoints[condition.funY(indexX + w)][condition.funX(indexY + g)].getColorNumber() != startPoints[indexX][indexY].getColorNumber()))) {
+                                    continue wew2;
+                                }
+                            }
+                        }
+
+                        startPoints[indexX][indexY].addDislocationDensity(BigInteger.valueOf(pack));
+                        startPoints[indexX][indexY].setIfGlacial(true);
+//                        if(startPoints[indexX][indexY].getDislocationDensity()/1000>=Cell.CRITICAL_DISSLOCATION){
+//                            startPoints[indexX][indexY].setColorNumber(3500);
+//                        }
+
+//                        System.out.println("Druga petla");
+                        continue wew1;
+
+                    }while(flag!=false);
+
+                }
+            }
+
+
+            // regula przejscia
+            BigInteger tmpDislocationDensity = new BigInteger("1");
+
+            for(int d=0;d<X;d++){
+                for(int e=0;e<Y;e++){
+                    boolean ifGlacial=false;
+                    for (int w = -1; w < 2; w++) {
+                        for (int g = -1; g < 2; g++) {
+                            if(w==0 && g==0){
+
+                            }else{
+                                tmpDislocationDensity.add(startPoints[condition.funY(d + w)][condition.funX(e + g)].getDislocationDensity());
+                                if(startPoints[condition.funY(d + w)][condition.funX(e + g)].isIfGlacial()==true){
+                                    ifGlacial=true;
+                                }
+                            }
+
+
+                        }
+                    }
+                    if(ifGlacial && startPoints[d][e].getDislocationDensity().compareTo(tmpDislocationDensity)==1){
+                        System.out.println("jestem przy regule przejscia");
+
+                        tmpStartPoints[d][e].setColorNumber(3500);
+
+                    }
+                    ifGlacial=false;
+                }
+            }
+
+
+            for (int d = 0; d < X; d++) {
+                for (int e = 0; e < Y; e++) {
+                    if(tmpStartPoints[d][e].getColorNumber()==3500){
+                        startPoints[d][e].setColorNumber(tmpStartPoints[d][e].getColorNumber());
+                        startPoints[d][e].setIfGlacial(true);
+                        startPoints[d][e].setDislocationDensity(new BigInteger("0"));
+                    }
+                }
+            }
+
+            saveToFile(i);
+        }
+    }
+
+
+    @FXML
+    public void showRecrystallization(){
+        canvas.setWidth(Y* SquareShape.WIDTH);
+        canvas.setHeight(X*SquareShape.HEIGHT);
+
+        for(int i=0;i<X;i++){
+            ww:
+            for(int j=0;j<Y;j++){
+                if(startPoints[i][j].getColorNumber()==3500){
+                    drawer.setFill(Colors.getColor(3500));
+                }else{
+                    drawer.setFill(Color.WHITE);
+                }
+                drawer.fillRoundRect(j*SquareShape.WIDTH,i*SquareShape.HEIGHT,SquareShape.WIDTH,SquareShape.HEIGHT,0,0);
+                drawer.strokeRect(j*SquareShape.WIDTH,i*SquareShape.HEIGHT,SquareShape.WIDTH,SquareShape.HEIGHT);
+            }
+        }
+
+    }
+
+    public void saveToFile(int timeIndex) throws IOException {
+        String filePath = "date.txt";
+        FileWriter fileWriter = null;
+
+        try {
+            fileWriter = new FileWriter(filePath, true);
+            BigInteger number = new BigInteger("1");
+            for(int i=0;i<X;i++){
+                for(int j=0;j<Y;j++){
+                    number = number.add(startPoints[i][j].getDislocationDensity());
+                }
+            }
+
+            fileWriter.write(timeIndex*0.001 + "                        " + number.toString());
+            fileWriter.write("\n");
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (fileWriter != null) {
+                fileWriter.close();
+            }
+        }
+    }
 
 
     /****************************************************          Metody prywatne            **************************************************************/
