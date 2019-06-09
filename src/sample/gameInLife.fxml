@@ -220,10 +220,5 @@
             <Insets left="880.0" top="120.0" />
          </StackPane.margin>
       </Button>
-      <Button mnemonicParsing="false" text="Save To File" StackPane.alignment="TOP_LEFT">
-         <StackPane.margin>
-            <Insets left="880.0" top="70.0" />
-         </StackPane.margin>
-      </Button>
    </children>
 </StackPane>

@@ -547,6 +547,7 @@ public class GameInLifeController {
                                 cell[0][0].setColorNumber(newValue);
                                 int oldValue = startPoints[x][y].getColorNumber();
                                 startPoints[x][y].setColorNumber(cell[0][0].getColorNumber());
+                                //tmpStartPoints[x][y].setColorNumber(cell[0][0].getColorNumber());
                                 int tmpEnergy = (int) (neighborhood.check(condition,startPoints,x,y,tmpStartPoints)*J);
 
                                 int differenceEnergy = tmpEnergy-energy;
@@ -557,14 +558,17 @@ public class GameInLifeController {
                                     if(random.nextDouble()>likelihood){
                                         startPoints[x][y].setColorNumber(oldValue);
                                         startPoints[x][y].setEnergy(energy);
+                                        tmpStartPoints[x][y].setEnergy(energy);
                                     }else {
                                         drawer.setFill(Colors.getColor(newValue-1));
                                         startPoints[x][y].setEnergy(tmpEnergy);
+                                        tmpStartPoints[x][y].setEnergy(energy);
                                         drawer.fillRoundRect(y*SquareShape.WIDTH,x*SquareShape.HEIGHT,SquareShape.WIDTH,SquareShape.HEIGHT,0,0);
                                     }
                                 }else{
                                     startPoints[x][y].setColorNumber(oldValue);
                                     startPoints[x][y].setEnergy(energy);
+                                    tmpStartPoints[x][y].setEnergy(energy);
                                 }
                             }
 
@@ -573,35 +577,35 @@ public class GameInLifeController {
                 }
 
 
-//                    for(int i=0;i<iterations;i++){
-//                        if(ifStart){
-//                            x = random.nextInt(X);
-//                            y = random.nextInt(Y);
-//                            int energy= (int) (neighborhood.check(condition,startPoints,x,y,tmpStartPoints)*J);
-//                            Cell cell[][] = new Cell[1][1];
-//                            cell[0][0]=new Cell();
-//                            int newValue=neighborhood.giveRandomIdNeighborhood(startPoints,condition,x,y);
-//                            cell[0][0].setColorNumber(newValue);
-//                            int oldValue = startPoints[x][y].getColorNumber();
-//                            startPoints[x][y].setColorNumber(cell[0][0].getColorNumber());
-//                            int tmpEnergy = (int) (neighborhood.check(condition,startPoints,x,y,tmpStartPoints)*J);
-//
-//                            int differenceEnergy = tmpEnergy-energy;
-//
-//                            if(differenceEnergy>0){
-//                                double likelihood=Math.exp(-differenceEnergy/Double.parseDouble(constantText.getCharacters().toString()));
-//                                if(random.nextDouble()<likelihood){
-//                                    startPoints[x][y].setColorNumber(oldValue);
-//                                }else {
-//                                    drawer.setFill(Colors.getColor(newValue-1));
-//                                    drawer.fillRoundRect(y*SquareShape.WIDTH,x*SquareShape.HEIGHT,SquareShape.WIDTH,SquareShape.HEIGHT,0,0);
-//                                }
-//                            }else{
-//                                startPoints[x][y].setColorNumber(oldValue);
-//                            }
-//                        }else{
-//                            break;
-//                        }
+////                    for(int i=0;i<iterations;i++){
+////                        if(ifStart){
+////                            x = random.nextInt(X);
+////                            y = random.nextInt(Y);
+////                            int energy= (int) (neighborhood.check(condition,startPoints,x,y,tmpStartPoints)*J);
+////                            Cell cell[][] = new Cell[1][1];
+////                            cell[0][0]=new Cell();
+////                            int newValue=neighborhood.giveRandomIdNeighborhood(startPoints,condition,x,y);
+////                            cell[0][0].setColorNumber(newValue);
+////                            int oldValue = startPoints[x][y].getColorNumber();
+////                            startPoints[x][y].setColorNumber(cell[0][0].getColorNumber());
+////                            int tmpEnergy = (int) (neighborhood.check(condition,startPoints,x,y,tmpStartPoints)*J);
+////
+////                            int differenceEnergy = tmpEnergy-energy;
+////
+////                            if(differenceEnergy>0){
+////                                double likelihood=Math.exp(-differenceEnergy/Double.parseDouble(constantText.getCharacters().toString()));
+////                                if(random.nextDouble()<likelihood){
+////                                    startPoints[x][y].setColorNumber(oldValue);
+////                                }else {
+////                                    drawer.setFill(Colors.getColor(newValue-1));
+////                                    drawer.fillRoundRect(y*SquareShape.WIDTH,x*SquareShape.HEIGHT,SquareShape.WIDTH,SquareShape.HEIGHT,0,0);
+////                                }
+////                            }else{
+////                                startPoints[x][y].setColorNumber(oldValue);
+////                            }
+////                        }else{
+////                            break;
+////                        }
 //                }
 
                 sizeFieldX.setEditable(true);
@@ -621,12 +625,21 @@ public class GameInLifeController {
         canvas.setWidth(Y* SquareShape.WIDTH);
         canvas.setHeight(X*SquareShape.HEIGHT);
 
+        drawer.setFill(Color.WHITE);
+        for (int i = 0; i < X; i++) {
+            for (int j = 0; j < Y; j++) {
+                drawer.fillRoundRect(j*SquareShape.WIDTH,i*SquareShape.HEIGHT,SquareShape.WIDTH,SquareShape.HEIGHT,0,0);
+                drawer.strokeRect(j*SquareShape.WIDTH,i*SquareShape.HEIGHT,SquareShape.WIDTH,SquareShape.HEIGHT);
+            }
+
+        }
+
         for(int i=0;i<X;i++){
             ww:
             for(int j=0;j<Y;j++){
 
                 for(int w=1;w< Colors.getNumberOfColors();w++){
-                    if(startPoints[i][j].getEnergy()==w){
+                    if(tmpStartPoints[i][j].getEnergy()==w){
                         drawer.setFill(Colors.getColor(w-1));
                         drawer.fillRoundRect(j*SquareShape.WIDTH,i*SquareShape.HEIGHT,SquareShape.WIDTH,SquareShape.HEIGHT,0,0);
                         continue ww;
@@ -646,61 +659,69 @@ public class GameInLifeController {
         Random random = new Random();
 
         for(int i=0;i<iterations;i++){
-            double roFirst = ConstantValue.A/ ConstantValue.B + (1 - ConstantValue.A/ ConstantValue.B*Math.exp(ConstantValue.B*ConstantValue.TIME));
-            double roSecond = ConstantValue.A/ ConstantValue.B + (1 - ConstantValue.A/ ConstantValue.B*Math.exp(ConstantValue.B*(ConstantValue.TIME + (i+1)*0.001)));
-            double roDelta = roFirst-roSecond;
-            double overageDislocation = roDelta/X*Y;
-            double percent = random.nextInt(100)/100;
-            long pack = (long) (overageDislocation*percent);
+            double roFirst = ConstantValue.A/ ConstantValue.B + (1 - ConstantValue.A/ ConstantValue.B)*Math.exp(-(ConstantValue.B*ConstantValue.TIME*i));
+            double roSecond = ConstantValue.A/ ConstantValue.B + (1 - ConstantValue.A/ ConstantValue.B)*Math.exp(-(ConstantValue.B*((i+1)*0.001)));
+            double roDelta = roSecond-roFirst;
+            double overageDislocation = roDelta/(X*Y);
+            double percent = random.nextDouble();
+            double pack = overageDislocation*percent;
+
+//            System.out.println("overageDislocation " + overageDislocation);
+//            System.out.println("percent:" + percent);
+            System.out.println("Paczka po 1 % " + pack);
             for(int x=0;x<X;x++){
                 for(int y=0;y<Y;y++){
-                    startPoints[x][y].addDislocationDensity(BigInteger.valueOf(pack));
+
+                    startPoints[x][y].addDislocationDensity(pack);
+
+
+                    //System.out.print(startPoints[x][y].getDislocationDensity()+ "   ");
                 }
+                //System.out.println();
             }
 
             int howManyPacks = random.nextInt(100);
-            pack = (long) (overageDislocation*((100 - percent*100)/100)/howManyPacks);
-
+            pack = (overageDislocation*(1 - percent))/howManyPacks;
+            System.out.println("Paczka po 2 % " + pack);
+            System.out.println("howManyPacks "+ howManyPacks);
             double likelihood = 0.8;
-
-
             int z;
+
             wew1:
             for(z=0;z<howManyPacks;z++){
-                boolean flag=true;
 
+                boolean flag=true;
                 double randomPoint = random.nextDouble();
 
+                // na granicy ziarna
                 if(randomPoint<=likelihood){
-
 
                     do {
                         int indexX = random.nextInt(X);
                         int indexY = random.nextInt(Y);
-//                        System.out.println("index x " +indexX);
-//                        System.out.println("index y " +indexY);
-
                         // Moore
 
                         for (int w = -1; w < 2; w++)
                             for (int g = -1; g < 2; g++) {
                                 if (((startPoints[condition.funY(indexX + w)][condition.funX(indexY + g)].getColorNumber() != startPoints[indexX][indexY].getColorNumber()))) {
-                                    startPoints[condition.funY(indexX)][condition.funX(indexY)].addDislocationDensity(BigInteger.valueOf(pack));
 
-                                    if(startPoints[indexX][indexY].getDislocationDensity().divide(new BigInteger("100")).compareTo(Cell.CRITICAL_DISSLOCATION)==1){
-                                        startPoints[indexX][indexY].setColorNumber(3500);
+                                    startPoints[indexX][indexY].addDislocationDensity(pack);
+
+
+                                    if(startPoints[indexX][indexY].getDislocationDensity()>Cell.CRITICAL_DISSLOCATION){
+                                        startPoints[indexX][indexY].setColorNumber(2000);
                                         startPoints[indexX][indexY].setIfGlacial(true);
-                                        startPoints[indexX][indexY].setDislocationDensity(new BigInteger("0"));
+                                        startPoints[indexX][indexY].setDislocationDensity(0);
+                                        //System.out.println("sdgfsgdfg");
                                     }
                                     continue wew1;
                                 }
                             }
-
-//                        System.out.println("Wszystkie takie same");
                     }while(flag!=false);
 
-
+                    //wewnatrz ziarna
                 }else{
+
                     wew2:
                     do {
                         int indexX = random.nextInt(X);
@@ -716,13 +737,15 @@ public class GameInLifeController {
                             }
                         }
 
-                        startPoints[indexX][indexY].addDislocationDensity(BigInteger.valueOf(pack));
-                        startPoints[indexX][indexY].setIfGlacial(true);
-//                        if(startPoints[indexX][indexY].getDislocationDensity()/1000>=Cell.CRITICAL_DISSLOCATION){
-//                            startPoints[indexX][indexY].setColorNumber(3500);
-//                        }
 
-//                        System.out.println("Druga petla");
+                        startPoints[indexX][indexY].addDislocationDensity(pack);
+
+
+                        if(startPoints[indexX][indexY].getDislocationDensity()>Cell.CRITICAL_DISSLOCATION){
+                            startPoints[indexX][indexY].setColorNumber(2000);
+                            startPoints[indexX][indexY].setIfGlacial(true);
+                            startPoints[indexX][indexY].setDislocationDensity(0);
+                        }
                         continue wew1;
 
                     }while(flag!=false);
@@ -732,44 +755,55 @@ public class GameInLifeController {
 
 
             // regula przejscia
-            BigInteger tmpDislocationDensity = new BigInteger("1");
+            double tmpDislocationDensity = 0;
 
             for(int d=0;d<X;d++){
                 for(int e=0;e<Y;e++){
-                    boolean ifGlacial=false;
+                    boolean ifGlacial=true;
                     for (int w = -1; w < 2; w++) {
                         for (int g = -1; g < 2; g++) {
                             if(w==0 && g==0){
 
                             }else{
-                                tmpDislocationDensity.add(startPoints[condition.funY(d + w)][condition.funX(e + g)].getDislocationDensity());
+                                tmpDislocationDensity+=startPoints[condition.funY(d + w)][condition.funX(e + g)].getDislocationDensity();
                                 if(startPoints[condition.funY(d + w)][condition.funX(e + g)].isIfGlacial()==true){
+
                                     ifGlacial=true;
                                 }
+
+//                                if((startPoints[condition.funY(d + w)][condition.funX(e + g)].isIfGlacial()==true) && (startPoints[d][e].getDislocationDensity()>startPoints[condition.funY(d + w)][condition.funX(e + g)].getDislocationDensity())){
+//                                }else{
+//                                    ifGlacial=false;
+//                                }
                             }
 
 
                         }
                     }
-                    if(ifGlacial && startPoints[d][e].getDislocationDensity().compareTo(tmpDislocationDensity)==1){
-                        System.out.println("jestem przy regule przejscia");
-
-                        tmpStartPoints[d][e].setColorNumber(3500);
-
+//                    if(ifGlacial && (!startPoints[d][e].isIfGlacial())){
+//                        startPoints[d][e].setIfGlacial(true);
+//                        startPoints[d][e].setColorNumber(2000);
+//                        startPoints[d][e].setDislocationDensity(0);
+//                    }
+                    if(ifGlacial && (startPoints[d][e].getDislocationDensity()>tmpDislocationDensity)){
+                        startPoints[d][e].setIfGlacial(true);
+                        startPoints[d][e].setColorNumber(2000);
+                        startPoints[d][e].setDislocationDensity(0);
                     }
-                    ifGlacial=false;
                 }
             }
 
 
+            drawer.setFill(Colors.getColor(2000));
             for (int d = 0; d < X; d++) {
                 for (int e = 0; e < Y; e++) {
-                    if(tmpStartPoints[d][e].getColorNumber()==3500){
-                        startPoints[d][e].setColorNumber(tmpStartPoints[d][e].getColorNumber());
-                        startPoints[d][e].setIfGlacial(true);
-                        startPoints[d][e].setDislocationDensity(new BigInteger("0"));
+                    System.out.print(startPoints[d][e].getDislocationDensity() + "   ");
+                    if(startPoints[d][e].isIfGlacial()){
+                        drawer.fillRoundRect(e*SquareShape.WIDTH,d*SquareShape.HEIGHT,SquareShape.WIDTH,SquareShape.HEIGHT,0,0);
+                        drawer.strokeRect(e*SquareShape.WIDTH,d*SquareShape.HEIGHT,SquareShape.WIDTH,SquareShape.HEIGHT);
                     }
                 }
+                System.out.println();
             }
 
             saveToFile(i);
@@ -783,17 +817,35 @@ public class GameInLifeController {
         canvas.setHeight(X*SquareShape.HEIGHT);
 
         for(int i=0;i<X;i++){
-            ww:
             for(int j=0;j<Y;j++){
-                if(startPoints[i][j].getColorNumber()==3500){
-                    drawer.setFill(Colors.getColor(3500));
-                }else{
+//                if(startPoints[i][j].isIfGlacial()){
+//                    drawer.setFill(Colors.getColor(2000));
+//                }else{
+//                    drawer.setFill(Color.WHITE);
+//                }
+                if(startPoints[i][j].getDislocationDensity()<1.80986464696034E9){
+                    drawer.setFill(Color.rgb(20,20,20));
+                }else if(startPoints[i][j].getDislocationDensity()<1.950986464696034E9){
+                    drawer.setFill(Color.BLACK);
+                }else if(startPoints[i][j].getDislocationDensity()<1.971986464696034E9){
+                    drawer.setFill(Color.BLUE);
+                }else if(startPoints[i][j].getDislocationDensity()<2.022986464696034E9){
+                    drawer.setFill(Color.RED);
+                }else if(startPoints[i][j].getDislocationDensity()<2.180986464696034E9){
+                    drawer.setFill(Color.rgb(60,60,155));
+                }else if(startPoints[i][j].getDislocationDensity()<2.250986464696034E9){
                     drawer.setFill(Color.WHITE);
+                }else if(startPoints[i][j].getDislocationDensity()<2.2986464696034E9) {
+                    drawer.setFill(Color.YELLOW);
+                }else if(startPoints[i][j].getDislocationDensity()<2.6986464696034E9) {
+                    drawer.setFill(Color.BLACK);
                 }
                 drawer.fillRoundRect(j*SquareShape.WIDTH,i*SquareShape.HEIGHT,SquareShape.WIDTH,SquareShape.HEIGHT,0,0);
                 drawer.strokeRect(j*SquareShape.WIDTH,i*SquareShape.HEIGHT,SquareShape.WIDTH,SquareShape.HEIGHT);
             }
         }
+
+
 
     }
 
@@ -803,14 +855,14 @@ public class GameInLifeController {
 
         try {
             fileWriter = new FileWriter(filePath, true);
-            BigInteger number = new BigInteger("1");
+            double number = 1;
             for(int i=0;i<X;i++){
                 for(int j=0;j<Y;j++){
-                    number = number.add(startPoints[i][j].getDislocationDensity());
+                    number = number+startPoints[i][j].getDislocationDensity();
                 }
             }
 
-            fileWriter.write(timeIndex*0.001 + "                        " + number.toString());
+            fileWriter.write(timeIndex*0.001 + "                        " + number);
             fileWriter.write("\n");
         } catch (IOException e) {
             e.printStackTrace();
@@ -887,6 +939,7 @@ public class GameInLifeController {
         for(int i=0;i<X;i++){
             for(int j=0;j<Y;j++){
                 startPoints[i][j].setColorNumber(0);
+                tmpStartPoints[i][j].setColorNumber(0);
             }
         }
     }

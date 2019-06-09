@@ -1,17 +1,15 @@
 package sample.structure;
 
 import sample.SquareShape;
-
-import java.math.BigInteger;
 import java.util.Random;
 
 public class Cell {
-    public static final BigInteger CRITICAL_DISSLOCATION = new BigInteger("13927458546192");
+    public static final double CRITICAL_DISSLOCATION = 1999999999;
     private double specifyGravityX;
     private double specifyGravityY;
     private int colorNumber;
     private int energy;
-    private BigInteger dislocationDensity;
+    private double dislocationDensity;
     private boolean ifGlacial;
 
     public int getEnergy() {
@@ -40,10 +38,7 @@ public class Cell {
         this.specifyGravityX = x * SquareShape.HEIGHT + random.nextDouble()*10;
         this.specifyGravityY = y * SquareShape.WIDTH + random.nextDouble()*10;
         ifGlacial=false;
-        dislocationDensity=new BigInteger("0");
-
-//        System.out.println(this.specifyGravityX);
-//        System.out.println(this.specifyGravityY);
+        dislocationDensity=0.0;
     }
 
     public int getColorNumber() {
@@ -54,16 +49,16 @@ public class Cell {
         this.colorNumber = colorNumber;
     }
 
-    public void addDislocationDensity(BigInteger dislocationDensity){
-        this.dislocationDensity =this.dislocationDensity.add(dislocationDensity);
+    public void addDislocationDensity(double dislocationDensity){
+        this.dislocationDensity +=dislocationDensity;
 
     }
 
-    public BigInteger getDislocationDensity() {
+    public double getDislocationDensity() {
         return dislocationDensity;
     }
 
-    public void setDislocationDensity(BigInteger dislocationDensity) {
+    public void setDislocationDensity(double dislocationDensity) {
         this.dislocationDensity = dislocationDensity;
     }
 
