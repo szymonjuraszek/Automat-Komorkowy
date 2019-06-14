@@ -12,7 +12,6 @@ public class HexagonalRandom implements Neighborhood {
         int energy=0;
 
         int choose=random.nextInt(2);
-        System.out.println(choose);
 
         switch (choose){
             case 0:{

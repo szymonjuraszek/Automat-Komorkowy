@@ -19,7 +19,7 @@ public class Colors {
 
     static{
         //Generuje kolory
-        System.out.println("jestem tutaj");
+        //System.out.println("jestem tutaj");
         int counter=0;
 
         zew:

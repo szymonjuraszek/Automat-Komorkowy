@@ -1,6 +1,5 @@
 package sample.controller;
 
-import com.sun.xml.internal.bind.v2.runtime.reflect.opt.Const;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -18,7 +17,6 @@ import sample.structure.Cell;
 
 import java.io.FileWriter;
 import java.io.IOException;
-import java.math.BigInteger;
 import java.util.*;
 
 public class GameInLifeController {
@@ -81,16 +79,10 @@ public class GameInLifeController {
         }
     }
 
-
-
-
-
-
-
     @FXML
     void initialize(){
 
-       System.out.println("Inicjuje dane dla game in life");
+       System.out.println("Inicjalizuje dane dla programu");
        sizeFieldX.setText("45");
        sizeFieldY.setText("80");
        constantText.setText("0.6");
@@ -99,13 +91,10 @@ public class GameInLifeController {
 
        X =Integer.parseInt(sizeFieldX.getCharacters().toString());
        Y =Integer.parseInt(sizeFieldY.getCharacters().toString());
-        initCells();
-
+       initCells();
 
        canvas.setWidth(Y* SquareShape.WIDTH);
        canvas.setHeight(X*SquareShape.HEIGHT);
-//       int width = (int) (canvas.getWidth()/size);
-//       int height = (int) (canvas.getHeight()/size);
 
        for(int i=0;i<X;i++){
            for(int j=0;j<Y;j++){
@@ -114,17 +103,11 @@ public class GameInLifeController {
        }
 
         canvas.setOnMouseClicked(event -> {
-
-            double x = event.getX(), y = event.getY();
-//            System.out.println(" " + x + " " + y);
             for(int i=0;i<X;i++){
                 if(event.getY()>i*SquareShape.WIDTH && event.getY()<((i+1)*SquareShape.WIDTH)){
                     for(int j=0;j<Y;j++){
                         if(event.getX()>j*SquareShape.HEIGHT && event.getX()<((j+1)*SquareShape.HEIGHT)) {
-
                             if(startPoints[i][j].getColorNumber() != 0){
-//                                System.out.println(i);
-//                                System.out.println(j);
                                 drawer.setFill(Color.WHITE);
                                 drawer.fillRoundRect(j*SquareShape.WIDTH,i*SquareShape.HEIGHT,SquareShape.WIDTH,SquareShape.HEIGHT,0,0);
                                 startPoints[i][j].setColorNumber(0);
@@ -139,33 +122,32 @@ public class GameInLifeController {
                                 }
 
                                 drawer.fillRoundRect(j*SquareShape.WIDTH,i*SquareShape.HEIGHT,SquareShape.WIDTH,SquareShape.HEIGHT,0,0);
-
                             }
-
                             break;
                         }
-
                     }
                 }
-
             }
             drawer.setFill(Color.BLACK);
         });
 
 
        slowRadio.setOnMouseClicked(event -> {
+           slowRadio.setSelected(true);
            fastRadio.setSelected(false);
            veryFastRadio.setSelected(false);
        });
 
        fastRadio.setOnMouseClicked(event -> {
            slowRadio.setSelected(false);
+           fastRadio.setSelected(true);
            veryFastRadio.setSelected(false);
        });
 
        veryFastRadio.setOnMouseClicked(event -> {
            slowRadio.setSelected(false);
            fastRadio.setSelected(false);
+           veryFastRadio.setSelected(true);
        });
 
     }
@@ -198,11 +180,9 @@ public class GameInLifeController {
                 while (ifStart) {
                     for (int i = 0; i < X; i++) {
                         for (int j = 0; j < Y; j++) {
-                            // na przyszlosc mozna tu zrobi poprawke zeby calej tablic nie przesylac
                             neighborhood.check(condition,startPoints,i,j,tmpStartPoints);
                         }
                     }
-
 
 //                     program dziala za szybko i nie dziala wiec spowolnienie
                     try {
@@ -220,7 +200,6 @@ public class GameInLifeController {
                     // przenosimy obliczone punkty do oryginalnej tablicy
                     for (int i = 0; i < X; i++) {
                         for (int j = 0; j < Y; j++) {
-
                             startPoints[i][j].setColorNumber(tmpStartPoints[i][j].getColorNumber());
 //                            System.out.print(startPoints[i][j].getColorNumber()+ " ");
                             tmpStartPoints[i][j].setColorNumber(0);
@@ -228,26 +207,23 @@ public class GameInLifeController {
 //                        System.out.println();
                     }
                     preparationBeforeDrawing();
-                    drawOnCanvasRectangles(startPoints);
+                    drawOnCanvasRectangles(startPoints,true);
 
                 }
 
                 sizeFieldX.setEditable(true);
                 sizeFieldY.setEditable(true);
+                System.err.println("Skonczylem rozrost ziarna metoda CA");
             }).start();
-
         }else{
             Alert alert = new Alert(Alert.AlertType.INFORMATION, "Program is working(pick stop if yo want to stop)");
             alert.showAndWait();
         }
-        System.out.println("Skonczylem prace");
-
     }
-
 
     @FXML
     void showCA(){
-        drawOnCanvasRectangles(startPoints);
+        drawOnCanvasRectangles(startPoints,true);
     }
 
 
@@ -261,7 +237,7 @@ public class GameInLifeController {
 
 
 
-/*******************************           Ustawianie sasiedztwa i waunkow brzegowych                 *******************************/
+/*******************************           Ustawianie sasiedztwa i warunkow brzegowych                 *******************************/
     @FXML
     void setPeriodicalBoundary(){
         condition = new PeriodicalCondition(X,Y);
@@ -326,7 +302,7 @@ public class GameInLifeController {
                 }
             }
 
-            drawOnCanvasRectangles(startPoints);
+            drawOnCanvasRectangles(startPoints,true);
         }else{
             System.out.println("Pracuje watek nie mozna");
         }
@@ -346,7 +322,7 @@ public class GameInLifeController {
             startPoints[6][5].setColorNumber(1);
             startPoints[7][6].setColorNumber(1);
 
-            drawOnCanvasRectangles(startPoints);
+            drawOnCanvasRectangles(startPoints,true);
         }else{
             System.out.println("Pracuje watek nie mozna");
         }
@@ -366,7 +342,7 @@ public class GameInLifeController {
             startPoints[7][5].setColorNumber(1);
             startPoints[7][6].setColorNumber(1);
 
-            drawOnCanvasRectangles(startPoints);
+            drawOnCanvasRectangles(startPoints,true);
         }else{
             System.out.println("Pracuje watek nie mozna");
         }
@@ -384,7 +360,7 @@ public class GameInLifeController {
             startPoints[6][5].setColorNumber(1);
             startPoints[7][5].setColorNumber(1);
 
-            drawOnCanvasRectangles(startPoints);
+            drawOnCanvasRectangles(startPoints,true);
         }else{
             System.out.println("Pracuje watek nie mozna");
         }
@@ -450,7 +426,7 @@ public class GameInLifeController {
 
             } while (counter < numberOfSeed);
 
-            drawOnCanvasRectangles(startPoints);
+            drawOnCanvasRectangles(startPoints,true);
         }
     }
 
@@ -476,7 +452,7 @@ public class GameInLifeController {
 
             }
 
-            drawOnCanvasRectangles(startPoints);
+            drawOnCanvasRectangles(startPoints,true);
         }
 
     }
@@ -511,7 +487,7 @@ public class GameInLifeController {
                 //System.out.println(counter);
             } while (counter < numberOfSeed);
 
-            drawOnCanvasRectangles(startPoints);
+            drawOnCanvasRectangles(startPoints,true);
         }
     }
 
@@ -658,6 +634,11 @@ public class GameInLifeController {
         int iterations = Integer.parseInt(iterationText.getCharacters().toString());
         Random random = new Random();
 
+        Cell.CRITICAL_DISSLOCATION= (ConstantValue.A/ ConstantValue.B + (1 - ConstantValue.A/ ConstantValue.B)*Math.exp(-(ConstantValue.B*0.065)))/(X*Y);
+        System.out.println(Cell.CRITICAL_DISSLOCATION);
+
+        //1.1710667062009494E9
+
         for(int i=0;i<iterations;i++){
             double roFirst = ConstantValue.A/ ConstantValue.B + (1 - ConstantValue.A/ ConstantValue.B)*Math.exp(-(ConstantValue.B*ConstantValue.TIME*i));
             double roSecond = ConstantValue.A/ ConstantValue.B + (1 - ConstantValue.A/ ConstantValue.B)*Math.exp(-(ConstantValue.B*((i+1)*0.001)));
@@ -668,7 +649,7 @@ public class GameInLifeController {
 
 //            System.out.println("overageDislocation " + overageDislocation);
 //            System.out.println("percent:" + percent);
-            System.out.println("Paczka po 1 % " + pack);
+            //System.out.println("Paczka po 1 % " + pack);
             for(int x=0;x<X;x++){
                 for(int y=0;y<Y;y++){
 
@@ -682,8 +663,8 @@ public class GameInLifeController {
 
             int howManyPacks = random.nextInt(100);
             pack = (overageDislocation*(1 - percent))/howManyPacks;
-            System.out.println("Paczka po 2 % " + pack);
-            System.out.println("howManyPacks "+ howManyPacks);
+            //System.out.println("Paczka po 2 % " + pack);
+            //System.out.println("howManyPacks "+ howManyPacks);
             double likelihood = 0.8;
             int z;
 
@@ -712,7 +693,6 @@ public class GameInLifeController {
                                         startPoints[indexX][indexY].setColorNumber(2000);
                                         startPoints[indexX][indexY].setIfGlacial(true);
                                         startPoints[indexX][indexY].setDislocationDensity(0);
-                                        //System.out.println("sdgfsgdfg");
                                     }
                                     continue wew1;
                                 }
@@ -759,7 +739,7 @@ public class GameInLifeController {
 
             for(int d=0;d<X;d++){
                 for(int e=0;e<Y;e++){
-                    boolean ifGlacial=true;
+                    boolean ifGlacial=false;
                     for (int w = -1; w < 2; w++) {
                         for (int g = -1; g < 2; g++) {
                             if(w==0 && g==0){
@@ -805,7 +785,6 @@ public class GameInLifeController {
                 }
                 System.out.println();
             }
-
             saveToFile(i);
         }
     }
@@ -823,21 +802,21 @@ public class GameInLifeController {
 //                }else{
 //                    drawer.setFill(Color.WHITE);
 //                }
-                if(startPoints[i][j].getDislocationDensity()<1.80986464696034E9){
+                if(startPoints[i][j].getDislocationDensity()<1.10986464696034E9){
                     drawer.setFill(Color.rgb(20,20,20));
-                }else if(startPoints[i][j].getDislocationDensity()<1.950986464696034E9){
+                }else if(startPoints[i][j].getDislocationDensity()<1.13986464696034E9){
                     drawer.setFill(Color.BLACK);
-                }else if(startPoints[i][j].getDislocationDensity()<1.971986464696034E9){
+                }else if(startPoints[i][j].getDislocationDensity()<1.151986464696034E9){
                     drawer.setFill(Color.BLUE);
-                }else if(startPoints[i][j].getDislocationDensity()<2.022986464696034E9){
+                }else if(startPoints[i][j].getDislocationDensity()<1.172986464696034E9){
                     drawer.setFill(Color.RED);
-                }else if(startPoints[i][j].getDislocationDensity()<2.180986464696034E9){
+                }else if(startPoints[i][j].getDislocationDensity()<1.190986464696034E9){
                     drawer.setFill(Color.rgb(60,60,155));
-                }else if(startPoints[i][j].getDislocationDensity()<2.250986464696034E9){
+                }else if(startPoints[i][j].getDislocationDensity()<2.10986464696034E9){
                     drawer.setFill(Color.WHITE);
-                }else if(startPoints[i][j].getDislocationDensity()<2.2986464696034E9) {
+                }else if(startPoints[i][j].getDislocationDensity()<2.586464696034E9) {
                     drawer.setFill(Color.YELLOW);
-                }else if(startPoints[i][j].getDislocationDensity()<2.6986464696034E9) {
+                }else if(startPoints[i][j].getDislocationDensity()<2.986464696034E9) {
                     drawer.setFill(Color.BLACK);
                 }
                 drawer.fillRoundRect(j*SquareShape.WIDTH,i*SquareShape.HEIGHT,SquareShape.WIDTH,SquareShape.HEIGHT,0,0);
@@ -912,17 +891,14 @@ public class GameInLifeController {
         }
     }
 
-    private void drawOnCanvasRectangles(Cell startPoints[][]){
+    private void drawOnCanvasRectangles(Cell startPoints[][],boolean ifDrawNet){
 
-        //System.out.println("Jestem w rysowaniu");
-        //System.out.println(Thread.currentThread());
         canvas.setWidth(Y* SquareShape.WIDTH);
         canvas.setHeight(X*SquareShape.HEIGHT);
 
         for(int i=0;i<X;i++){
             ww:
             for(int j=0;j<Y;j++){
-
                 for(int w=1;w< Colors.getNumberOfColors();w++){
                     if(startPoints[i][j].getColorNumber()==w){
                         drawer.setFill(Colors.getColor(w-1));
@@ -930,7 +906,10 @@ public class GameInLifeController {
                         continue ww;
                     }
                 }
-                drawer.strokeRect(j*SquareShape.WIDTH,i*SquareShape.HEIGHT,SquareShape.WIDTH,SquareShape.HEIGHT);
+                if(ifDrawNet){
+                    drawer.strokeRect(j*SquareShape.WIDTH,i*SquareShape.HEIGHT,SquareShape.WIDTH,SquareShape.HEIGHT);
+                }
+
             }
         }
     }

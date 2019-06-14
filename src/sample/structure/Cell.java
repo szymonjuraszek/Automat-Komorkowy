@@ -4,7 +4,7 @@ import sample.SquareShape;
 import java.util.Random;
 
 public class Cell {
-    public static final double CRITICAL_DISSLOCATION = 1999999999;
+    public static double CRITICAL_DISSLOCATION = 1.1710667062009494E9;
     private double specifyGravityX;
     private double specifyGravityY;
     private int colorNumber;
